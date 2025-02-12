@@ -8,7 +8,7 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-import { getAllMoviesFilter } from './handlers/movies'; 
+import { getAllMoviesFilter } from './handlers/movies';
 
 // async function DataRequest(type, name, year, page) {
 //     const API_KEY = OMDB_API_KEY;
@@ -33,10 +33,10 @@ addEventListener('fetch', event => {
 
 async function handleRequest(request) {
     const url = new URL(request.url);
-     const pathname = url.pathname;
+    const pathname = url.pathname;
 
     const corsHeaders = {
-        "Access-Control-Allow-Origin": "http://localhost:5173", 
+        "Access-Control-Allow-Origin": "http://localhost:5173",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
     };
@@ -46,13 +46,19 @@ async function handleRequest(request) {
             headers: corsHeaders
         });
     }
-	if (pathname === '/') {
+    if (pathname === '/') {
         return new Response('Welcome to Online Movie Worker! Use /movies?name=YourMovie', {
             headers: { 'Content-Type': 'text/plain' },
         });
     }
 
-     if (pathname === "/movies") {
+    if (pathname === "/movies") {
+        const allowedOrigin = "http://localhost:5173";
+        const requestOrigin = request.headers.get("origin");
+
+        if (requestOrigin && requestOrigin !== allowedOrigin) {
+            return new Response("Access Denied", { status: 403 });
+        }
         const page = parseInt(url.searchParams.get("page")) || 1;
         const gteVote = parseFloat(url.searchParams.get("gteVote")) || 0;
         const lteVote = parseFloat(url.searchParams.get("lteVote")) || 6;
@@ -60,12 +66,12 @@ async function handleRequest(request) {
         const gteYear = url.searchParams.get("gteYear") || "1950-01-01";
         const lteYear = url.searchParams.get("lteYear") || "2026-01-01";
 
-       
+
         const result = await getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote);
 
         return new Response(JSON.stringify(result), {
             headers: {
-                ...corsHeaders,  
+                ...corsHeaders,
                 "Content-Type": "application/json"
             }
         });
