@@ -9,7 +9,7 @@
  */
 
 async function DataRequest(type, name, year, page) {
-    const API_KEY = OMDB_API_KEY; // Постави твоя API ключ тук
+    const API_KEY = OMDB_API_KEY;
 
     const currentYear = new Date().getFullYear();
     let url = `https://www.omdbapi.com/?apikey=${API_KEY}&type=${type}&s=${name}&page=${page}`;
@@ -23,7 +23,7 @@ async function DataRequest(type, name, year, page) {
 
     return result;
 }
-
+//test deploy
 // Cloudflare Worker event listener
 addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request));
