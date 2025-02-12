@@ -8,22 +8,24 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-async function DataRequest(type, name, year, page) {
-    const API_KEY = OMDB_API_KEY;
+import { getAllMoviesFilter } from './handlers/movies'; 
 
-    const currentYear = new Date().getFullYear();
-    let url = `https://www.omdbapi.com/?apikey=${API_KEY}&type=${type}&s=${name}&page=${page}`;
+// async function DataRequest(type, name, year, page) {
+//     const API_KEY = OMDB_API_KEY;
 
-    if (year >= 1900 && year <= currentYear) {
-        url += `&y=${year}`;
-    }
+//     const currentYear = new Date().getFullYear();
+//     let url = `https://www.omdbapi.com/?apikey=${API_KEY}&type=${type}&s=${name}&page=${page}`;
 
-    const response = await fetch(url);
-    const result = await response.json();
+//     if (year >= 1900 && year <= currentYear) {
+//         url += `&y=${year}`;
+//     }
 
-    return result;
-}
-//test deploy
+//     const response = await fetch(url);
+//     const result = await response.json();
+
+//     return result;
+// }
+
 // Cloudflare Worker event listener
 addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request));
@@ -33,14 +35,12 @@ async function handleRequest(request) {
     const url = new URL(request.url);
      const pathname = url.pathname;
 
-    // Позволени CORS заглавки
     const corsHeaders = {
-        "Access-Control-Allow-Origin": "*",  // или замени '*' с 'http://localhost:5173' за по-строг контрол
+        "Access-Control-Allow-Origin": "http://localhost:5173", 
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
     };
 
-    // Обработване на CORS preflight заявките (OPTIONS)
     if (request.method === "OPTIONS") {
         return new Response(null, {
             headers: corsHeaders
@@ -52,15 +52,20 @@ async function handleRequest(request) {
         });
     }
 
-    if (pathname === "/movies") {
-        const name = url.searchParams.get("name") || "Batman";
-        const year = parseInt(url.searchParams.get("year")) || 2023;
+     if (pathname === "/movies") {
         const page = parseInt(url.searchParams.get("page")) || 1;
+        const gteVote = parseFloat(url.searchParams.get("gteVote")) || 0;
+        const lteVote = parseFloat(url.searchParams.get("lteVote")) || 6;
+        const prYear = parseInt(url.searchParams.get("prYear")) || 2023;
+        const gteYear = url.searchParams.get("gteYear") || "1950-01-01";
+        const lteYear = url.searchParams.get("lteYear") || "2026-01-01";
 
-        const result = await DataRequest("movie", name, year, page);
+       
+        const result = await getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote);
+
         return new Response(JSON.stringify(result), {
             headers: {
-                ...corsHeaders,  // Добавяне на CORS заглавките към отговора
+                ...corsHeaders,  
                 "Content-Type": "application/json"
             }
         });
