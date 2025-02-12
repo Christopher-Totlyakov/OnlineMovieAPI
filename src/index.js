@@ -55,10 +55,18 @@ async function handleRequest(request) {
     if (pathname === "/movies") {
         const allowedOrigin = "http://localhost:5173";
         const requestOrigin = request.headers.get("origin");
+        const requestReferer = request.headers.get("referer");
 
         if (requestOrigin && requestOrigin !== allowedOrigin) {
             return new Response("Access Denied", { status: 403 });
         }
+        if (requestReferer && !requestReferer.startsWith(allowedOrigin)) {
+            return new Response("Access Denied", { status: 403 });
+        }
+        if (!requestOrigin) {
+            return new Response("Direct requests are not allowed", { status: 403 });
+        }
+
         const page = parseInt(url.searchParams.get("page")) || 1;
         const gteVote = parseFloat(url.searchParams.get("gteVote")) || 0;
         const lteVote = parseFloat(url.searchParams.get("lteVote")) || 6;
