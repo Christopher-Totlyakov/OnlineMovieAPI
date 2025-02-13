@@ -8,7 +8,7 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-import { getAllMoviesFilter } from './handlers/movies';
+import { getAllMoviesFilter,  getMovieDetails } from './handlers/movies';
 
 // async function DataRequest(type, name, year, page) {
 //     const API_KEY = OMDB_API_KEY;
@@ -51,9 +51,7 @@ async function handleRequest(request) {
             headers: { 'Content-Type': 'text/plain' },
         });
     }
-
-    if (pathname === "/movies") {
-        const allowedOrigin = "http://localhost:5173";
+    const allowedOrigin = "http://localhost:5173";
         const requestOrigin = request.headers.get("origin");
         const requestReferer = request.headers.get("referer");
 
@@ -67,6 +65,7 @@ async function handleRequest(request) {
             return new Response("Direct requests are not allowed", { status: 403 });
         }
 
+    if (pathname === "/movies") {
         const page = parseInt(url.searchParams.get("page")) || 1;
         const gteVote = parseFloat(url.searchParams.get("gteVote")) || 0;
         const lteVote = parseFloat(url.searchParams.get("lteVote")) || 6;
@@ -76,6 +75,22 @@ async function handleRequest(request) {
 
 
         const result = await getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote);
+
+        return new Response(JSON.stringify(result), {
+            headers: {
+                ...corsHeaders,
+                "Content-Type": "application/json"
+            }
+        });
+    }
+
+    if (pathname === "/movie/details") {
+
+        const movieId = parseInt(url.searchParams.get("movieId")) || 1;
+        const language = url.searchParams.get("language");
+
+
+        const result = await getMovieDetails( movieId, language);
 
         return new Response(JSON.stringify(result), {
             headers: {
