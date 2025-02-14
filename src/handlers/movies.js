@@ -10,7 +10,6 @@ export async function getAllMoviesFilter( prYear, gteYear, lteYear, page, gteVot
       
     const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${page}&primary_release_year=${prYear}&primary_release_date.gte=${gteYear}&primary_release_date.lte=${lteYear}&sort_by=popularity.desc&vote_average.gte=${gteVote}&vote_average.lte=${lteVote}`;
 
-    console.log(url);
     const response = await
         fetch(
             url,
@@ -26,7 +25,6 @@ export async function getMovieDetails( movieId, language='en-US' ) {
     
     const url = `https://api.themoviedb.org/3/movie/${movieId}?language=${language}`;
 
-    console.log(url);
     const response = await
         fetch(
             url,
