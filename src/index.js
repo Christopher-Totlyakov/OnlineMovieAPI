@@ -86,11 +86,11 @@ function extractParams(url) {
     return {
         page: parseInt(url.searchParams.get("page")) || 1,
         gteVote: parseFloat(url.searchParams.get("gteVote")) || 0,
-        lteVote: parseFloat(url.searchParams.get("lteVote")) || 6,
-        prYear: parseInt(url.searchParams.get("prYear")) || 2023,
-        gteYear: url.searchParams.get("gteYear") || "1950-01-01",
-        lteYear: url.searchParams.get("lteYear") || "2026-01-01",
-        id: parseInt(url.searchParams.get("id")) || 1,
+        lteVote: parseFloat(url.searchParams.get("lteVote")) || 10,
+        prYear: parseInt(url.searchParams.get("prYear")),
+        gteYear: url.searchParams.get("gteYear"),
+        lteYear: url.searchParams.get("lteYear"),
+        id: parseInt(url.searchParams.get("id")),
         language: url.searchParams.get("language"),
     };
 }
