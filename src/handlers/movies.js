@@ -21,16 +21,17 @@ export async function getAllMoviesFilter( prYear, gteYear, lteYear, page, gteVot
 }
 
 
-export async function getMovieDetails( movieId, language='en-US' ) {
-    
-    const url = `https://api.themoviedb.org/3/movie/${movieId}?language=${language}`;
+export async function getMovieDetails(movieId, language = 'en-US') {
+    const url = `https://api.themoviedb.org/3/movie/${movieId}?append_to_response=videos&language=${language}`;
 
-    const response = await
-        fetch(
-            url,
-            options
-        );
-
+    const response = await fetch(url, options);
     const result = await response.json();
-    return result;
+
+    const trailers = result.videos?.results.filter(video => video.type === "Trailer" && video.site === "YouTube") || [];
+
+    delete result.videos;
+
+    return { ...result, trailers };
 }
+
+

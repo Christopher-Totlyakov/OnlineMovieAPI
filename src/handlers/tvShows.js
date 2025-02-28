@@ -23,14 +23,14 @@ export async function getAllTVShowsFilter( prYear, gteYear, lteYear, page, gteVo
 
 export async function getTVShowDetails( TVShowsId, language='en-US' ) {
     
-    const url = `https://api.themoviedb.org/3/movie/${TVShowsId}?language=${language}`;
+    const url = `https://api.themoviedb.org/3/tv/${TVShowsId}?append_to_response=videos&language=${language}`;
 
-    const response = await
-        fetch(
-            url,
-            options
-        );
-
+    const response = await fetch(url, options);
     const result = await response.json();
-    return result;
+
+    const trailers = result.videos?.results.filter(video => video.type === "Trailer" && video.site === "YouTube") || [];
+
+    delete result.videos;
+
+    return { ...result, trailers };
 }
