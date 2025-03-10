@@ -6,10 +6,7 @@ const options = {
     }
 };
 
-export async function getAllTVShowsFilter( prYear, gteYear, lteYear, page, gteVote, lteVote) {
-      
-    const url = `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_video=false&language=en-US&page=${page}&first_air_date_year=${prYear}&first_air_date.gte=${gteYear}&first_air_date.lte=${lteYear}&sort_by=popularity.desc&vote_average.gte=${gteVote}&vote_average.lte=${lteVote}`;
-   
+async function returnResponseJson(url) {
     const response = await
         fetch(
             url,
@@ -20,13 +17,19 @@ export async function getAllTVShowsFilter( prYear, gteYear, lteYear, page, gteVo
     return result;
 }
 
+export async function getAllTVShowsFilter( prYear, gteYear, lteYear, page, gteVote, lteVote) {
+      
+    const url = `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_video=false&language=en-US&page=${page}&first_air_date_year=${prYear}&first_air_date.gte=${gteYear}&first_air_date.lte=${lteYear}&sort_by=popularity.desc&vote_average.gte=${gteVote}&vote_average.lte=${lteVote}`;
+   
+    await returnResponseJson(url);
+}
+
 
 export async function getTVShowDetails( TVShowsId, language='en-US' ) {
     
     const url = `https://api.themoviedb.org/3/tv/${TVShowsId}?append_to_response=videos&language=${language}`;
 
-    const response = await fetch(url, options);
-    const result = await response.json();
+    const result = await returnResponseJson(url);
 
     const trailers = result.videos?.results.filter(video => video.type === "Trailer" && video.site === "YouTube") || [];
 
@@ -39,26 +42,19 @@ export async function getAllTVShowsByNameYearFilter(name, year, page) {
 
     const url = `https://api.themoviedb.org/3/search/tv?query=${name}&first_air_date_year=${year}&include_adult=false&language=en-US&page=${page}`;
 
-    const response = await
-        fetch(
-            url,
-            options
-        );
-
-    const result = await response.json();
-    return result;
+    await returnResponseJson(url);
 }
 
 export async function getAllTVGenres() {
 
     const url = `https://api.themoviedb.org/3/genre/tv/list?language=en`;
 
-    const response = await
-        fetch(
-            url,
-            options
-        );
+    await returnResponseJson(url);
+}
 
-    const result = await response.json();
-    return result;
+export async function getTVRecommendations(id) {
+
+    const url = `https://api.themoviedb.org/3/tv/${id}/recommendations?language=en-US&page=1`;
+
+    await returnResponseJson(url);
 }
