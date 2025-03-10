@@ -21,7 +21,7 @@ export async function getAllTVShowsFilter( prYear, gteYear, lteYear, page, gteVo
       
     const url = `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_video=false&language=en-US&page=${page}&first_air_date_year=${prYear}&first_air_date.gte=${gteYear}&first_air_date.lte=${lteYear}&sort_by=popularity.desc&vote_average.gte=${gteVote}&vote_average.lte=${lteVote}`;
    
-    await returnResponseJson(url);
+    return await returnResponseJson(url);
 }
 
 
@@ -42,19 +42,26 @@ export async function getAllTVShowsByNameYearFilter(name, year, page) {
 
     const url = `https://api.themoviedb.org/3/search/tv?query=${name}&first_air_date_year=${year}&include_adult=false&language=en-US&page=${page}`;
 
-    await returnResponseJson(url);
+    return await returnResponseJson(url);
 }
 
 export async function getAllTVGenres() {
 
     const url = `https://api.themoviedb.org/3/genre/tv/list?language=en`;
 
-    await returnResponseJson(url);
+    return await returnResponseJson(url);
 }
 
 export async function getTVRecommendations(id) {
 
     const url = `https://api.themoviedb.org/3/tv/${id}/recommendations?language=en-US&page=1`;
 
-    await returnResponseJson(url);
+    return await returnResponseJson(url);
+}
+
+export async function getTVTrending(time_window) {
+
+    const url = `https://api.themoviedb.org/3/trending/tv/${time_window}?language=en-US`;
+
+    return await returnResponseJson(url);
 }

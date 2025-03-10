@@ -1,5 +1,5 @@
-import { getAllMoviesFilter, getAllMoviesByNameYearFilter, getMovieDetails, getAllMovieGenres, getMovieRecommendations } from './handlers/movies';
-import { getAllTVShowsFilter, getAllTVShowsByNameYearFilter, getTVShowDetails, getAllTVGenres, getTVRecommendations } from './handlers/tvShows';
+import { getAllMoviesFilter, getAllMoviesByNameYearFilter, getMovieDetails, getAllMovieGenres, getMovieRecommendations, getMovieTrending } from './handlers/movies';
+import { getAllTVShowsFilter, getAllTVShowsByNameYearFilter, getTVShowDetails, getAllTVGenres, getTVRecommendations, getTVTrending } from './handlers/tvShows';
 
 
 
@@ -41,10 +41,12 @@ async function handleRequest(request) {
         "/movies/genres": handleMovieGenres,
         "/movie/details": handleMovieDetails,
         "/movie/recommendations": handleMovieRecommendations,
+        "/movie/trending": handleMovieTrending,
         "/tv": handleTVShows,
         "/tv/genres": handleTVShowGenres,
         "/tv/details": handleTVShowsDetails,
         "/tv/recommendations": handleTVRecommendations,
+        "/tv/trending": handleTVTrending,
     };
 
     if (routes[pathname]) {
@@ -118,6 +120,18 @@ async function handleTVRecommendations(url) {
     return jsonResponse(result);
 }
 
+async function handleMovieTrending(url) {
+    const { time } = extractParams(url);
+    const result = await getMovieTrending(time);
+    return jsonResponse(result);
+}
+
+async function handleTVTrending(url) {
+    const { time } = extractParams(url);
+    const result = await getTVTrending(time);
+    return jsonResponse(result);
+}
+
 function extractParams(url) {
     return {
         page: parseInt(url.searchParams.get("page")) || 1,
@@ -130,6 +144,7 @@ function extractParams(url) {
         language: url.searchParams.get("language"),
         name: url.searchParams.get("name"),
         year: parseInt(url.searchParams.get("year")),
+        time: url.searchParams.get("time") || "day",
     };
 }
 
