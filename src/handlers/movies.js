@@ -35,3 +35,17 @@ export async function getMovieDetails(movieId, language = 'en-US') {
 }
 
 
+
+export async function getAllMoviesByNameYearFilter(name, year, page) {
+
+    const url = `https://api.themoviedb.org/3/search/movie?query=${name}&include_adult=false&language=en-US&page=${page}&primary_release_year=${year}`;
+
+    const response = await
+        fetch(
+            url,
+            options
+        );
+
+    const result = await response.json();
+    return result;
+}

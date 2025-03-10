@@ -1,5 +1,5 @@
-import { getAllMoviesFilter, getMovieDetails } from './handlers/movies';
-import { getAllTVShowsFilter, getTVShowDetails } from './handlers/tvShows';
+import { getAllMoviesFilter, getAllMoviesByNameYearFilter, getMovieDetails } from './handlers/movies';
+import { getAllTVShowsFilter, getAllTVShowsByNameYearFilter, getTVShowDetails } from './handlers/tvShows';
 
 
 
@@ -52,12 +52,17 @@ async function handleRequest(request) {
 
 
 async function handleMovies(url) {
-    const { page, gteVote, lteVote, prYear, gteYear, lteYear } = extractParams(url);
+    const { page, gteVote, lteVote, prYear, gteYear, lteYear, name, year } = extractParams(url);
 
-    const result = await getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote);
+    let result;
+    if (name || year) {
+        result = await getAllMoviesByNameYearFilter(name, year, page);
+    } else {
+        result = await getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote);
+    }
+
     return jsonResponse(result);
 }
-
 
 async function handleMovieDetails(url) {
     
@@ -69,9 +74,15 @@ async function handleMovieDetails(url) {
 
 
 async function handleTVShows(url) {
-    const { page, gteVote, lteVote, prYear, gteYear, lteYear } = extractParams(url);
+    const { page, gteVote, lteVote, prYear, gteYear, lteYear, name, year } = extractParams(url);
 
-    const result = await getAllTVShowsFilter(prYear, gteYear, lteYear, page, gteVote, lteVote);
+    let result;
+    if (name || year) {
+        result = await getAllTVShowsByNameYearFilter(name, year, page);
+    } else {
+        result = await getAllTVShowsFilter(prYear, gteYear, lteYear, page, gteVote, lteVote);
+    }
+
     return jsonResponse(result);
 }
 
@@ -92,6 +103,8 @@ function extractParams(url) {
         lteYear: url.searchParams.get("lteYear"),
         id: parseInt(url.searchParams.get("id")),
         language: url.searchParams.get("language"),
+        name: url.searchParams.get("name"),
+        year: parseInt(url.searchParams.get("year")),
     };
 }
 

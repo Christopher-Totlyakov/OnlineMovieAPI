@@ -34,3 +34,17 @@ export async function getTVShowDetails( TVShowsId, language='en-US' ) {
 
     return { ...result, trailers };
 }
+
+export async function getAllTVShowsByNameYearFilter(name, year, page) {
+
+    const url = `https://api.themoviedb.org/3/search/tv?query=${name}&first_air_date_year=${year}&include_adult=false&language=en-US&page=${page}`;
+
+    const response = await
+        fetch(
+            url,
+            options
+        );
+
+    const result = await response.json();
+    return result;
+}
