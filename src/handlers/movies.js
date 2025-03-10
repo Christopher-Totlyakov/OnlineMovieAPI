@@ -49,3 +49,17 @@ export async function getAllMoviesByNameYearFilter(name, year, page) {
     const result = await response.json();
     return result;
 }
+
+export async function getAllMovieGenres() {
+
+    const url = `https://api.themoviedb.org/3/genre/movie/list?language=en`;
+
+    const response = await
+        fetch(
+            url,
+            options
+        );
+
+    const result = await response.json();
+    return result;
+}

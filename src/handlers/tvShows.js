@@ -48,3 +48,17 @@ export async function getAllTVShowsByNameYearFilter(name, year, page) {
     const result = await response.json();
     return result;
 }
+
+export async function getAllTVGenres() {
+
+    const url = `https://api.themoviedb.org/3/genre/tv/list?language=en`;
+
+    const response = await
+        fetch(
+            url,
+            options
+        );
+
+    const result = await response.json();
+    return result;
+}

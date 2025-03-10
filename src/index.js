@@ -1,5 +1,5 @@
-import { getAllMoviesFilter, getAllMoviesByNameYearFilter, getMovieDetails } from './handlers/movies';
-import { getAllTVShowsFilter, getAllTVShowsByNameYearFilter, getTVShowDetails } from './handlers/tvShows';
+import { getAllMoviesFilter, getAllMoviesByNameYearFilter, getMovieDetails, getAllMovieGenres } from './handlers/movies';
+import { getAllTVShowsFilter, getAllTVShowsByNameYearFilter, getTVShowDetails, getAllTVGenres } from './handlers/tvShows';
 
 
 
@@ -38,8 +38,10 @@ async function handleRequest(request) {
 
     const routes = {
         "/movies": handleMovies,
+        "/movies/genres": handleMovieGenres,
         "/movie/details": handleMovieDetails,
         "/tv": handleTVShows,
+        "/tv/genres": handleTVShowGenres,
         "/tv/details": handleTVShowsDetails,
     };
 
@@ -72,7 +74,6 @@ async function handleMovieDetails(url) {
     return jsonResponse(result);
 }
 
-
 async function handleTVShows(url) {
     const { page, gteVote, lteVote, prYear, gteYear, lteYear, name, year } = extractParams(url);
 
@@ -90,6 +91,16 @@ async function handleTVShowsDetails(url) {
     const { id, language } = extractParams(url);
 
     const result = await getTVShowDetails(id, language);
+    return jsonResponse(result);
+}
+
+async function handleTVShowGenres(url) {
+    const result = await getAllTVGenres();
+    return jsonResponse(result);
+}
+
+async function handleMovieGenres(url) {
+    const result = await getAllMovieGenres();
     return jsonResponse(result);
 }
 
