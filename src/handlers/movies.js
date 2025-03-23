@@ -17,9 +17,10 @@ async function returnResponseJson(url) {
     return result;
 }
 
-export async function getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote) {
+export async function getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote, genres) {
 
-    const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${page}&primary_release_year=${prYear}&primary_release_date.gte=${gteYear}-01-01&primary_release_date.lte=${lteYear}-01-01&sort_by=popularity.desc&vote_average.gte=${gteVote}&vote_average.lte=${lteVote}`;
+    const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${page}&primary_release_year=${prYear}&primary_release_date.gte=${gteYear}-01-01&primary_release_date.lte=${lteYear}-01-01&sort_by=popularity.desc&vote_average.gte=${gteVote}&vote_average.lte=${lteVote}&with_genres=${genres}`;
+
     return await returnResponseJson(url);
 }
 

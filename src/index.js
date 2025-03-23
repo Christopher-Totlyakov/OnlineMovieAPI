@@ -58,13 +58,13 @@ async function handleRequest(request) {
 
 
 async function handleMovies(url) {
-    const { page, gteVote, lteVote, prYear, gteYear, lteYear, name, year } = extractParams(url);
+    const { page, gteVote, lteVote, prYear, gteYear, lteYear, name, year, genres } = extractParams(url);
 
     let result;
     if (name || year) {
         result = await getAllMoviesByNameYearFilter(name, year, page);
     } else {
-        result = await getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote);
+        result = await getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote, genres);
     }
 
     return jsonResponse(result);
@@ -79,13 +79,13 @@ async function handleMovieDetails(url) {
 }
 
 async function handleTVShows(url) {
-    const { page, gteVote, lteVote, prYear, gteYear, lteYear, name, year } = extractParams(url);
+    const { page, gteVote, lteVote, prYear, gteYear, lteYear, name, year, genres } = extractParams(url);
 
     let result;
     if (name || year) {
         result = await getAllTVShowsByNameYearFilter(name, year, page);
     } else {
-        result = await getAllTVShowsFilter(prYear, gteYear, lteYear, page, gteVote, lteVote);
+        result = await getAllTVShowsFilter(prYear, gteYear, lteYear, page, gteVote, lteVote, genres);
     }
 
     return jsonResponse(result);
@@ -138,13 +138,14 @@ function extractParams(url) {
         gteVote: parseFloat(url.searchParams.get("gteVote")) || 0,
         lteVote: parseFloat(url.searchParams.get("lteVote")) || 10,
         prYear: parseInt(url.searchParams.get("prYear")),
-        gteYear: url.searchParams.get("gteYear"),
-        lteYear: url.searchParams.get("lteYear"),
+        gteYear: url.searchParams.get("gteYear") || '1900',
+        lteYear: url.searchParams.get("lteYear") || new Date().getFullYear(),
         id: parseInt(url.searchParams.get("id")),
         language: url.searchParams.get("language"),
         name: url.searchParams.get("name"),
         year: parseInt(url.searchParams.get("year")),
         time: url.searchParams.get("time") || "day",
+        genres: url.searchParams.get("genres") || "",
     };
 }
 

@@ -17,9 +17,9 @@ async function returnResponseJson(url) {
     return result;
 }
 
-export async function getAllTVShowsFilter( prYear, gteYear, lteYear, page, gteVote, lteVote) {
+export async function getAllTVShowsFilter(prYear, gteYear, lteYear, page, gteVote, lteVote, genres) {
       
-    const url = `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_video=false&language=en-US&page=${page}&first_air_date_year=${prYear}&first_air_date.gte=${gteYear}&first_air_date.lte=${lteYear}&sort_by=popularity.desc&vote_average.gte=${gteVote}&vote_average.lte=${lteVote}`;
+    const url = `https://api.themoviedb.org/3/discover/tv?include_adult=false&include_video=false&language=en-US&page=${page}&first_air_date_year=${prYear}&first_air_date.gte=${gteYear}-01-01&first_air_date.lte=${lteYear}-01-01&sort_by=popularity.desc&vote_average.gte=${gteVote}&vote_average.lte=${lteVote}&with_genres=${genres}`;
    
     return await returnResponseJson(url);
 }
