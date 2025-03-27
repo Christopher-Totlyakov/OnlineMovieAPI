@@ -1,5 +1,6 @@
 import { getAllMoviesFilter, getAllMoviesByNameYearFilter, getMovieDetails, getAllMovieGenres, getMovieRecommendations, getMovieTrending } from './handlers/movies';
 import { getAllTVShowsFilter, getAllTVShowsByNameYearFilter, getTVShowDetails, getAllTVGenres, getTVRecommendations, getTVTrending } from './handlers/tvShows';
+import { player } from './handlers/player';
 
 
 
@@ -47,6 +48,7 @@ async function handleRequest(request) {
         "/tv/details": handleTVShowsDetails,
         "/tv/recommendations": handleTVRecommendations,
         "/tv/trending": handleTVTrending,
+        "/player": handleVideoProxy,
     };
 
     if (routes[pathname]) {
@@ -132,6 +134,13 @@ async function handleTVTrending(url) {
     return jsonResponse(result);
 }
 
+async function handleVideoProxy(url) {
+
+    const { id, type, season, episode } = extractParams(url);
+
+    return await player(id, type, season, episode);  
+}
+
 function extractParams(url) {
     return {
         page: parseInt(url.searchParams.get("page")) || 1,
@@ -146,9 +155,12 @@ function extractParams(url) {
         year: parseInt(url.searchParams.get("year")),
         time: url.searchParams.get("time") || "day",
         genres: url.searchParams.get("genres") || "",
+
+        type: url.searchParams.get("type") || "",
+        season: url.searchParams.get("season") || "",
+        episode: url.searchParams.get("episode") || "",
     };
 }
-
 
 function jsonResponse(data) {
     return new Response(JSON.stringify(data), {
