@@ -3,47 +3,31 @@ import { getAllTVShowsFilter, getAllTVShowsByNameYearFilter, getTVShowDetails, g
 import { player } from './handlers/player';
 
 
-
-addEventListener('fetch', event => {
-    event.respondWith(handleRequest(event.request));
-});
-
 const allowedOrigins = [
     "http://localhost:5173",
     "https://onlinemoviesmania.pages.dev"
 ];
 
-const corsHeaders = (request) => {
+const getCorsHeaders = (request) => {
     const origin = request.headers.get("Origin");
     return {
         "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : allowedOrigins[1],
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Credentials": "true"
     };
 };
 
+addEventListener("fetch", (event) => {
+    event.respondWith(handleRequest(event.request));
+});
 async function handleRequest(request) {
-
-    const allowedOrigin = "http://localhost:5173";
-    const requestOrigin = request.headers.get("origin");
-    const requestReferer = request.headers.get("referer");
-
-    //  if (requestOrigin && requestOrigin !== allowedOrigin) {
-    //      return new Response("Access Denied", { status: 403 });
-    //  }
-    //  if (requestReferer && !requestReferer.startsWith(allowedOrigin)) {
-    //      return new Response("Access Denied", { status: 403 });
-    //  }
-    //  if (!requestOrigin) {
-    //      return new Response("Direct requests are not allowed", { status: 403 });
-    //  }
+    if (request.method === "OPTIONS") {
+        return new Response(null, { headers: getCorsHeaders(request) });
+    }
 
     const url = new URL(request.url);
     const pathname = url.pathname;
-
-    if (request.method === "OPTIONS") {
-        return new Response(null, { headers: corsHeaders });
-    }
 
     const routes = {
         "/movies": handleMovies,
@@ -60,14 +44,14 @@ async function handleRequest(request) {
     };
 
     if (routes[pathname]) {
-        return routes[pathname](url);
+        return routes[pathname](url, request);
     }
 
-    return new Response("Not found", { status: 404, headers: corsHeaders });
+    return new Response("Not found", { status: 404, headers: getCorsHeaders(request) });
 }
 
 
-async function handleMovies(url) {
+async function handleMovies(url, request) {
     const { page, gteVote, lteVote, prYear, gteYear, lteYear, name, year, genres } = extractParams(url);
 
     let result;
@@ -77,11 +61,10 @@ async function handleMovies(url) {
         result = await getAllMoviesFilter(prYear, gteYear, lteYear, page, gteVote, lteVote, genres);
     }
 
-    return jsonResponse(result);
+    return jsonResponse(result, request);
 }
-
 async function handleMovieDetails(url) {
-    
+
     const { id, language } = extractParams(url);
 
     const result = await getMovieDetails(id, language);
@@ -146,7 +129,7 @@ async function handleVideoProxy(url) {
 
     const { id, type, season, episode } = extractParams(url);
 
-    return await player(id, type, season, episode);  
+    return await player(id, type, season, episode);
 }
 
 function extractParams(url) {
@@ -170,10 +153,10 @@ function extractParams(url) {
     };
 }
 
-function jsonResponse(data) {
+function jsonResponse(data, request) {
     return new Response(JSON.stringify(data), {
         headers: {
-            ...corsHeaders,
+            ...getCorsHeaders(request),
             "Content-Type": "application/json"
         }
     });
