@@ -8,10 +8,18 @@ addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request));
 });
 
-const corsHeaders = {
-    "Access-Control-Allow-Origin": "http://localhost:5173",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://onlinemoviesmania.pages.dev"
+];
+
+const corsHeaders = (request) => {
+    const origin = request.headers.get("Origin");
+    return {
+        "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : allowedOrigins[1],
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+    };
 };
 
 async function handleRequest(request) {
