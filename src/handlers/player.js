@@ -14,9 +14,10 @@ export async function player(id, type, season, episode) {
     });
 
     let text = await response.text();
-
     text = text.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
-    console.log(text);
+    text = text.replace(/window\.open\s*\(/gi, "console.log(");
+    text = text.replace(/\sonclick=["'][^"']*["']/gi, "");
+    text = text.replace(/eval\s*\(/gi, "console.log(");
 
     return new Response(text, {
         headers: {
