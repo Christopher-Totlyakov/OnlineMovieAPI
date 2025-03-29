@@ -8,30 +8,26 @@ addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request));
 });
 
-const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-};
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://onlinemoviesmania.pages.dev",
+];
 
 async function handleRequest(request) {
-
-    const allowedOrigin = "http://localhost:5173";
     const requestOrigin = request.headers.get("origin");
-    const requestReferer = request.headers.get("referer");
-
-    //  if (requestOrigin && requestOrigin !== allowedOrigin) {
-    //      return new Response("Access Denied", { status: 403 });
-    //  }
-    //  if (requestReferer && !requestReferer.startsWith(allowedOrigin)) {
-    //      return new Response("Access Denied", { status: 403 });
-    //  }
-    //  if (!requestOrigin) {
-    //      return new Response("Direct requests are not allowed", { status: 403 });
-    //  }
 
     const url = new URL(request.url);
     const pathname = url.pathname;
+
+    if (pathname !== "/player" && !allowedOrigins.includes(requestOrigin)) {
+        return new Response("Access Denied", { status: 403 });
+    }
+
+    const corsHeaders = {
+        "Access-Control-Allow-Origin": requestOrigin,
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+    };
 
     if (request.method === "OPTIONS") {
         return new Response(null, { headers: corsHeaders });
@@ -52,7 +48,7 @@ async function handleRequest(request) {
     };
 
     if (routes[pathname]) {
-        return routes[pathname](url);
+        return routes[pathname](url, corsHeaders);
     }
 
     return new Response("Not found", { status: 404, headers: corsHeaders });
@@ -73,7 +69,7 @@ async function handleMovies(url) {
 }
 
 async function handleMovieDetails(url) {
-    
+
     const { id, language } = extractParams(url);
 
     const result = await getMovieDetails(id, language);
@@ -138,7 +134,7 @@ async function handleVideoProxy(url) {
 
     const { id, type, season, episode } = extractParams(url);
 
-    return await player(id, type, season, episode);  
+    return await player(id, type, season, episode);
 }
 
 function extractParams(url) {
@@ -162,7 +158,7 @@ function extractParams(url) {
     };
 }
 
-function jsonResponse(data) {
+function jsonResponse(data, corsHeaders) {
     return new Response(JSON.stringify(data), {
         headers: {
             ...corsHeaders,
