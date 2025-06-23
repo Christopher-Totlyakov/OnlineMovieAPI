@@ -16,19 +16,19 @@ const corsHeaders = {
 
 async function handleRequest(request) {
 
-    const allowedOrigin = "https://onlinemoviesmania.pages.dev/";
+    const allowedOrigin = "http://localhost:5173";
     const requestOrigin = request.headers.get("origin");
     const requestReferer = request.headers.get("referer");
 
-      if (requestOrigin && requestOrigin !== allowedOrigin) {
-          return new Response("Access Denied", { status: 403 });
-      }
-      if (requestReferer && !requestReferer.startsWith(allowedOrigin)) {
-          return new Response("Access Denied", { status: 403 });
-      }
-      if (!requestOrigin) {
-          return new Response("Direct requests are not allowed", { status: 403 });
-      }
+    //  if (requestOrigin && requestOrigin !== allowedOrigin) {Add commentMore actions
+    //      return new Response("Access Denied", { status: 403 });
+    //  }
+    //  if (requestReferer && !requestReferer.startsWith(allowedOrigin)) {
+    //      return new Response("Access Denied", { status: 403 });
+    //  }
+    //  if (!requestOrigin) {
+    //      return new Response("Direct requests are not allowed", { status: 403 });
+    //  }
 
     const url = new URL(request.url);
     const pathname = url.pathname;
