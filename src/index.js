@@ -16,7 +16,7 @@ const corsHeaders = {
 
 async function handleRequest(request) {
 
-    const allowedOrigin = "http://localhost:5173";
+    const allowedOrigin = "https://onlinemoviesmania.pages.dev/";
     const requestOrigin = request.headers.get("origin");
     const requestReferer = request.headers.get("referer");
 
