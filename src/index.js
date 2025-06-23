@@ -8,34 +8,48 @@ addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request));
 });
 
+const allowedOrigin = "https://onlinemoviesmania.pages.dev";
+
 const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
 };
 
 async function handleRequest(request) {
-
-    const allowedOrigin = "http://localhost:5173";
     const requestOrigin = request.headers.get("origin");
     const requestReferer = request.headers.get("referer");
 
-    //  if (requestOrigin && requestOrigin !== allowedOrigin) {Add commentMore actions
-    //      return new Response("Access Denied", { status: 403 });
-    //  }
-    //  if (requestReferer && !requestReferer.startsWith(allowedOrigin)) {
-    //      return new Response("Access Denied", { status: 403 });
-    //  }
-    //  if (!requestOrigin) {
-    //      return new Response("Direct requests are not allowed", { status: 403 });
-    //  }
+    if (request.method === "OPTIONS") {
+        return new Response(null, {
+            status: 204,
+            headers: corsHeaders,
+        });
+    }
+
+    if (requestOrigin && requestOrigin !== allowedOrigin) {
+        return new Response("Access Denied: Invalid Origin", {
+            status: 403,
+            headers: corsHeaders,
+        });
+    }
+
+    if (requestReferer && !requestReferer.startsWith(allowedOrigin)) {
+        return new Response("Access Denied: Invalid Referer", {
+            status: 403,
+            headers: corsHeaders,
+        });
+    }
+
+    if (!requestOrigin) {
+        return new Response("Direct requests are not allowed", {
+            status: 403,
+            headers: corsHeaders,
+        });
+    }
 
     const url = new URL(request.url);
     const pathname = url.pathname;
-
-    if (request.method === "OPTIONS") {
-        return new Response(null, { headers: corsHeaders });
-    }
 
     const routes = {
         "/movies": handleMovies,
