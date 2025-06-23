@@ -20,15 +20,15 @@ async function handleRequest(request) {
     const requestOrigin = request.headers.get("origin");
     const requestReferer = request.headers.get("referer");
 
-    //  if (requestOrigin && requestOrigin !== allowedOrigin) {
-    //      return new Response("Access Denied", { status: 403 });
-    //  }
-    //  if (requestReferer && !requestReferer.startsWith(allowedOrigin)) {
-    //      return new Response("Access Denied", { status: 403 });
-    //  }
-    //  if (!requestOrigin) {
-    //      return new Response("Direct requests are not allowed", { status: 403 });
-    //  }
+      if (requestOrigin && requestOrigin !== allowedOrigin) {
+          return new Response("Access Denied", { status: 403 });
+      }
+      if (requestReferer && !requestReferer.startsWith(allowedOrigin)) {
+          return new Response("Access Denied", { status: 403 });
+      }
+      if (!requestOrigin) {
+          return new Response("Direct requests are not allowed", { status: 403 });
+      }
 
     const url = new URL(request.url);
     const pathname = url.pathname;
