@@ -42,11 +42,14 @@ async function handleRequest(request) {
     }
 
     if (!requestOrigin) {
-        return new Response("Direct requests are not allowed", {
-            status: 403,
-            headers: corsHeaders,
-        });
-    }
+    	if (requestReferer && requestReferer.startsWith(allowedOrigin)) {
+    	} else {
+        	return new Response("Direct requests are not allowed", {
+          	 	status: 403,
+          	 	headers: corsHeaders,
+       		});
+    	}
+	}
 
     const url = new URL(request.url);
     const pathname = url.pathname;
